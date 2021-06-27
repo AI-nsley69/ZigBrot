@@ -50,7 +50,7 @@ pub fn main() !void {
         const section_height = (height - 1) / threads_to_use + 1;
         var i: u64 = 0;
         while (i * section_height < height) : (i += 1) {
-            const thread_config = ThreadConfig {
+            const thread_config = ThreadConfig{
                 .allocator = allocator,
                 .img = img,
                 .scale = scale,
@@ -64,6 +64,8 @@ pub fn main() !void {
         for (threads) |thr| {
             thr.wait();
         }
+        const render_time = timer.read();
+        std.debug.print("Rendered 1 frame in  {}\n", .{std.fmt.fmtDuration(render_time)});
 
         scale -= 0.05;
         const data = try img.writeToMemory(img_out_buf, .Ppm, .{ .ppm = .{ .binary = true } });
@@ -72,7 +74,7 @@ pub fn main() !void {
         defer f.close();
     }
     const elapsed_time = timer.read();
-    std.debug.print("{} to render {} frames.\n", .{ std.fmt.fmtDuration(elapsed_time), frames_to_render });
+    std.debug.print("{} to render & write {} frames.\n", .{ std.fmt.fmtDuration(elapsed_time), frames_to_render });
 }
 
 pub fn mandelThread(thread_config: ThreadConfig) !void {
@@ -105,7 +107,6 @@ pub fn mandelbrot(allocator: *std.mem.Allocator, img: zimg.Image, scale: f64, wi
     while (y_pixel < max_y) : (y_pixel += 1) {
         var x_pixel: u64 = 0;
         while (x_pixel < width) : (x_pixel += 1) {
-
             var x0 = 3.5 * @intToFloat(f64, x_pixel) / @intToFloat(f64, 1920) - 2.5;
             var y0 = 2 * @intToFloat(f64, y_pixel) / @intToFloat(f64, 1080) - 1;
             x0 += x_offset;
@@ -131,11 +132,11 @@ pub fn mandelbrot(allocator: *std.mem.Allocator, img: zimg.Image, scale: f64, wi
     }
 }
 
-const ThreadConfig = struct{
-    allocator: *std.mem.Allocator, 
-    img: zimg.Image, 
-    scale: f64, 
-    width: u64, 
-    min_y: u64, 
+const ThreadConfig = struct {
+    allocator: *std.mem.Allocator,
+    img: zimg.Image,
+    scale: f64,
+    width: u64,
+    min_y: u64,
     max_y: u64,
 };
