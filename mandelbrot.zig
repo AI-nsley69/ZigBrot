@@ -13,7 +13,7 @@ pub fn main() !void {
     const height: u64 = 1080;
 
     const threads_to_use = while (true) {
-        try output.writeAll("Cores to use : ");
+        try output.writeAll("Threads to use : ");
         const inputted_cores = try input.readUntilDelimiterAlloc(allocator, '\n', 2);
         defer allocator.free(inputted_cores);
         const max_cores = try std.Thread.cpuCount();
@@ -65,7 +65,7 @@ pub fn main() !void {
             thr.wait();
         }
         const render_time = timer.read();
-        std.debug.print("Rendered 1 frame in  {}\n", .{std.fmt.fmtDuration(render_time)});
+        // std.debug.print("Rendered 1 frame in  {}\n", .{std.fmt.fmtDuration(render_time)});
 
         scale -= 0.05;
         const data = try img.writeToMemory(img_out_buf, .Ppm, .{ .ppm = .{ .binary = true } });
