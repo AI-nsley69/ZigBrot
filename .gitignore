@@ -2,4 +2,5 @@ zig-cache
 executables
 mandelbrot.p*
 mandelbrot-images
-mandelbrot*.p*
+*.ppm
+*.png
