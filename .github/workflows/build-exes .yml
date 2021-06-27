@@ -6,12 +6,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
       - name: Linux build
-        run: zig build -OReleaseSafe -target x86_64-linux-musl -mcpu baseline
+        run: zig build -Drelease-safe -Dtarget x86_64-linux-musl -Dcpu baseline
       - name: Windows build
-        run: zig build -OReleaseSafe -target x86_64-windows-gnu -mcpu baseline
+        run: zig build -Drelease-safe -Dtarget x86_64-windows-gnu -Dcpu baseline
       - name: macOS build
-        run: zig build -OReleaseSafe -target x86_64-macos-gnu -mcpu baseline
+        run: zig build -Drelease-safe -Dtarget x86_64-macos-gnu -Dcpu baseline
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
