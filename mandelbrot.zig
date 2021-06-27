@@ -35,6 +35,9 @@ pub fn main() !void {
     const img = try zimg.Image.create(allocator, width, height, .Rgb24, .Ppm);
     defer img.deinit();
 
+    const img_out_buf = try allocator.alloc(u8, width * height * 3 + 1024);
+    defer allocator.free(img_out_buf);
+
     var scale: f64 = 1;
     var counter: u4 = 0;
     while (counter < frames_to_render) : (counter += 1) {
@@ -58,16 +61,18 @@ pub fn main() !void {
             threads[i] = try std.Thread.spawn(mandelThread, thread_config);
         }
         std.debug.assert(i == threads.len);
-        std.debug.print("{}\n", .{threads.len});
         for (threads) |thr| {
             thr.wait();
         }
 
         scale -= 0.05;
-        try img.writeToFilePath(filename, .Ppm, .{ .ppm = .{ .binary = true } });
+        const data = try img.writeToMemory(img_out_buf, .Ppm, .{ .ppm = .{ .binary = true } });
+        const f = try std.fs.cwd().createFile(filename, .{});
+        defer f.close();
+        defer f.close();
     }
     const elapsed_time = timer.read();
-    std.debug.print("{}ns to render {} frames.", .{elapsed_time, frames_to_render});
+    std.debug.print("{} to render {} frames.\n", .{ std.fmt.fmtDuration(elapsed_time), frames_to_render });
 }
 
 pub fn mandelThread(thread_config: ThreadConfig) !void {
