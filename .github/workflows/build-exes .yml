@@ -9,11 +9,11 @@ jobs:
         with:
           version: master
       - name: Linux build
-        run: zig build -Drelease-safe -Dtarget x86_64-linux-musl -Dcpu baseline
+        run: zig build -Drelease-safe -Dtarget=x86_64-linux-musl -Dcpu=baseline
       - name: Windows build
-        run: zig build -Drelease-safe -Dtarget x86_64-windows-gnu -Dcpu baseline
+        run: zig build -Drelease-safe -Dtarget=x86_64-windows-gnu -Dcpu=baseline
       - name: macOS build
-        run: zig build -Drelease-safe -Dtarget x86_64-macos-gnu -Dcpu baseline
+        run: zig build -Drelease-safe -Dtarget=x86_64-macos-gnu -Dcpu=baseline
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
